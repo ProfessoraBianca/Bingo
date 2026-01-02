@@ -1,6 +1,6 @@
 //script.js
 const tableElement = document.querySelector('table');
-
+const API_URL = 'https://bingo-backend-eycs.onrender.com'
 const rows = document.querySelectorAll('tr');
 rows.forEach((row, rowIndex) => {
     const cells = row.querySelectorAll('td');
@@ -12,7 +12,7 @@ rows.forEach((row, rowIndex) => {
 
 async function populateTable() {
     try {
-        const res = await fetch('http://localhost:3000/cells');
+        const res = await fetch(`${API_URL}/cells`);
         const cellsData = await res.json();
 
         cellsData.forEach(cellData => {
@@ -46,7 +46,7 @@ tableElement.addEventListener('click', async function(event) {
     if (!userName) return;
 
     try {
-        const res = await fetch(`http://localhost:3000/cells/${cellId}/click`, {
+        const res = await fetch(`${API_URL}/cells/${cellId}/click`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ user: userName })
@@ -71,3 +71,4 @@ tableElement.addEventListener('click', async function(event) {
         console.error('Erro na requisição:', err);
     }
 });
+
