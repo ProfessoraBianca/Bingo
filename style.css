@@ -1,0 +1,57 @@
+* {
+    margin: 0;
+    padding: 0;
+    text-decoration: none;
+    list-style: none;
+    box-sizing: border-box;
+    font-family: Arial;
+}
+
+body {
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    align-items: center;
+
+}
+
+h1 {
+    margin-top: 5rem;
+}
+
+table,
+tr,
+td {
+    border: 2px solid;
+    border-collapse: collapse;
+}
+
+table {
+    margin-bottom: 5rem;
+    outline: 2px solid red;
+}
+
+tr,
+td {
+    font-size: .8rem;
+    text-align: center;
+    width: 120px;
+    height: 120px;
+}
+
+td:hover {
+    background-color: green;
+    cursor: pointer;
+}
+
+.blocked {
+    background-image: url('./images/x.svg');
+    background-size: cover;
+}
+
+.blocked:hover {
+    cursor: default;
+    background-color: transparent;
+}
+
