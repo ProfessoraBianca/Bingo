@@ -2,7 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const connectDB = require('./config/db');
-const initCells = require('./initCells');
+const initCells = require('./controllers/initCells');
 const cellsRouter = require('./routes/cells');
 
 const app = express();
