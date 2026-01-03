@@ -39,4 +39,19 @@ router.post('/:id/click', async (req, res) => {
     }
 });
 
+router.post('/reset', async (req, res) => {
+    try {
+        await Cell.updateMany(
+            {},
+            { $set: { names: [], clicks: 0 } }
+        );
+
+        res.json({ message: 'Tabela resetada com sucesso' });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Erro ao resetar tabela' });
+    }
+});
+
 module.exports = router;
+
