@@ -8,10 +8,7 @@ const cellsRouter = require('./routes/cells');
 const app = express();
 
 app.use(cors({
-    origin: [
-        'http://127.0.0.1:5500',
-        'https://professorabianca.github.io'
-    ]
+    origin: '*'
 }));
 
 app.use(express.json());
