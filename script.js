@@ -73,33 +73,5 @@ tableElement.addEventListener('click', async event => {
     }
 });
 
-const resetBtn = document.getElementById('resetBtn');
-
-resetBtn.addEventListener('click', async () => {
-    if (!confirm('Deseja resetar o bingo?')) return;
-
-    try {
-        const res = await fetch(`${API_URL}/cells/reset`, {
-            method: 'POST'
-        });
-
-        const data = await res.json();
-        console.log(data);
-
-        resetDOM();
-    } catch (err) {
-        console.error('Erro ao resetar:', err);
-    }
-});
-
-function resetDOM() {
-    document.querySelectorAll('td').forEach(td => {
-        td.clickCount = 0;
-        td.classList.remove('blocked');
-
-        td.querySelectorAll('.addContent').forEach(p => p.remove());
-    });
-}
-
 
 
