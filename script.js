@@ -1,52 +1,58 @@
 //script.js
 const tableElement = document.querySelector('table');
-const API_URL = 'https://bingo-backend-eycs.onrender.com'
+const API_URL = 'https://bingo-backend-eycs.onrender.com';
+
 const rows = document.querySelectorAll('tr');
 rows.forEach((row, rowIndex) => {
-    const cells = row.querySelectorAll('td');
-    cells.forEach((cell, colIndex) => {
+    row.querySelectorAll('td').forEach((cell, colIndex) => {
         cell.dataset.cell = `r${rowIndex + 1}c${colIndex + 1}`;
         cell.clickCount = 0;
     });
 });
 
 async function populateTable() {
-    try {
-        const res = await fetch(`${API_URL}/cells`);
-        const cellsData = await res.json();
+    const res = await fetch(`${API_URL}/cells`);
+    const cellsData = await res.json();
 
-        cellsData.forEach(cellData => {
-            const td = document.querySelector(`[data-cell="${cellData.id}"]`);
-            if (!td) return;
+    cellsData.forEach(cellData => {
+        const td = document.querySelector(`[data-cell="${cellData.id}"]`);
+        if (!td) return;
 
-            td.clickCount = cellData.clicks;
+        td.clickCount = cellData.clicks;
+        td.innerHTML = '';
 
-            cellData.names.forEach(name => {
-                const p = document.createElement('p');
-                p.classList.add('addContent');
-                p.textContent = name;
-                td.appendChild(p);
-            });
-
-            if (td.clickCount >= 2) td.classList.add('blocked');
+        cellData.names.forEach(name => {
+            const p = document.createElement('p');
+            p.classList.add('addContent');
+            p.textContent = name;
+            td.appendChild(p);
         });
-    } catch (err) {
-        console.error('Erro ao popular tabela:', err);
-    }
+
+        if (td.clickCount >= 2) td.classList.add('blocked');
+    });
 }
 
 populateTable();
 
-tableElement.addEventListener('click', async function(event) {
+tableElement.addEventListener('click', async event => {
     const td = event.target.closest('td');
-    if (!td || td.clickCount >= 2) return;
-    const cellId = td.dataset.cell;
+    if (!td || td.clickCount >= 2 || td.classList.contains('pending')) return;
 
     const userName = prompt('Digite seu nome');
     if (!userName) return;
 
+    td.classList.add('pending');
+    td.clickCount += 1;
+
+    const p = document.createElement('p');
+    p.classList.add('addContent', 'pendingText');
+    p.textContent = userName;
+    td.appendChild(p);
+
+    if (td.clickCount >= 2) td.classList.add('blocked');
+
     try {
-        const res = await fetch(`${API_URL}/cells/${cellId}/click`, {
+        const res = await fetch(`${API_URL}/cells/${td.dataset.cell}/click`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ user: userName })
@@ -54,23 +60,19 @@ tableElement.addEventListener('click', async function(event) {
 
         const data = await res.json();
 
-        if (data.error) {
-            alert(data.error);
-            td.classList.add('blocked');
-        } else {
-            td.clickCount = data.clicks;
+        if (data.error) throw new Error();
 
-            const newPara = document.createElement('p');
-            newPara.classList.add('addContent');
-            newPara.textContent = userName;
-            td.appendChild(newPara);
-
-            if (td.clickCount >= 2) td.classList.add('blocked');
-        }
-    } catch (err) {
-        console.error('Erro na requisição:', err);
+        p.classList.remove('pendingText');
+        td.clickCount = data.clicks;
+    } catch {
+        p.remove();
+        td.clickCount -= 1;
+        td.classList.remove('blocked');
+    } finally {
+        td.classList.remove('pending');
     }
 });
+
 const resetBtn = document.getElementById('resetBtn');
 
 resetBtn.addEventListener('click', async () => {
@@ -98,5 +100,6 @@ function resetDOM() {
         td.querySelectorAll('.addContent').forEach(p => p.remove());
     });
 }
+
 
 
