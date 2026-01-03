@@ -1,4 +1,4 @@
-//script.js
+// script.js
 const tableElement = document.querySelector('table');
 const API_URL = 'https://bingo-backend-eycs.onrender.com';
 
@@ -19,7 +19,8 @@ async function populateTable() {
         if (!td) return;
 
         td.clickCount = cellData.clicks;
-        td.innerHTML = '';
+
+        td.querySelectorAll('.addContent').forEach(el => el.remove());
 
         cellData.names.forEach(name => {
             const p = document.createElement('p');
@@ -28,7 +29,11 @@ async function populateTable() {
             td.appendChild(p);
         });
 
-        if (td.clickCount >= 2) td.classList.add('blocked');
+        if (td.clickCount >= 2) {
+            td.classList.add('blocked');
+        } else {
+            td.classList.remove('blocked');
+        }
     });
 }
 
@@ -59,7 +64,6 @@ tableElement.addEventListener('click', async event => {
         });
 
         const data = await res.json();
-
         if (data.error) throw new Error();
 
         p.classList.remove('pendingText');
@@ -72,6 +76,3 @@ tableElement.addEventListener('click', async event => {
         td.classList.remove('pending');
     }
 });
-
-
-
